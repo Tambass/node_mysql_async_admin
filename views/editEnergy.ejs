@@ -1,3 +1,23 @@
 <%- include('./partials/header')-%>
 
+<div class="container">
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <form method="POST" action="/editEnergy/<%=energies.id%>?_method=PUT">
+
+                <div class="form-group">
+                    <label for="editEnergy">Modifier le carburant : <%=energies.name%></label>
+                    <input type="text" class="form-control" id="editEnergy" name="name">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+
+            </form>
+
+        </div>
+
+    </div>
+</div>
+
 <%- include('./partials/footer')-%>
