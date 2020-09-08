@@ -41,161 +41,36 @@ db.connect((err) => {
 const query = util.promisify(db.query).bind(db);
 global.db = db;
 global.query = query;
-// Controllers
 
-// Routes
+// **** CONTROLLERS **** //
 
-app.get("/", async (req, res) => {
-  //const query = ["SELECT * FROM factories", "SELECT * FROM energies"];
+const { getHomePage } = require("./controllers/getHomePage");
+const { addElement } = require("./controllers/addElement");
+const { addFile } = require("./controllers/addFile");
+const { getEditFactory } = require("./controllers/getEditFactory");
+const { putEditFactory } = require("./controllers/putEditFactory");
+const { getEditEnergy } = require("./controllers/getEditEnergy");
+const { putEditEnergy } = require("./controllers/putEditEnergy");
+const { deleteElement } = require("./controllers/deleteElement");
 
-  const factories = await query("SELECT * FROM factories");
-  const energies = await query("SELECT * FROM energies");
-  const cars = await query("SELECT name, image FROM cars");
+// **** ROUTES **** //
 
-  console.log(factories);
-
-  res.render("index", { factories, energies, cars });
-
-  // db.query(query, (err, result) => {
-  // console.log(result);
-  //res.render("index", { factories: result[0], energies: result[1] });
-  //});
-});
-
-app.post("/add", async (req, res) => {
-  const factoryName = req.body.factoryName;
-  const energyName = req.body.energyName;
-  const addFactory = await query(
-    "INSERT INTO factories (name) VALUES ('" + factoryName + "')"
-  );
-  const addEnergy = await query(
-    "INSERT INTO energies (name) VALUES ('" + energyName + "')"
-  );
-
-  res.redirect("/");
-});
-
-app.post("/addFile", async (req, res) => {
-  if (!req.files) {
-    return res.status(400).send("No files were uploaded.");
-  }
-
-  const imageUpload = req.files.image;
-
-  const name = req.body.name;
-
-  const image = `images/${imageUpload.name}`;
-
-  try {
-    if (
-      imageUpload.mimetype === "image/jpeg" ||
-      imageUpload.mimetype === "image/jpg" ||
-      imageUpload.mimetype === "image/gif" ||
-      imageUpload.mimetype === "image/png"
-    ) {
-      imageUpload.mv(`public/images/${imageUpload.name}`, async function (err) {
-        if (err) {
-          return res.status(500).send(err);
-        }
-
-        try {
-          await query("INSERT INTO cars (name, image) VALUES (?, ?);", [
-            name,
-            image,
-          ]);
-        } catch (err) {
-          res.send(err);
-        }
-      });
-    } else {
-      message = "Fichier invalide";
-      res.render("/add", { message });
-    }
-
-    //console.log(imageUpload);
-    await query;
-    res.send("ok !");
-  } catch (err) {
-    res.send(err);
-  }
-  res.redirect("/");
-});
-
-// AFFICHE LA PAGE POUR ÉDITER LE NOM DU CONSTRUCTEUR SELON SON ID
-
-app.get("/editFactory/:id", (req, res) => {
-  const id = req.params.id;
-
-  let query = "SELECT f.id, f.name FROM factories AS f WHERE f.id =" + id;
-
-  db.query(query, (err, result) => {
-    console.log(result);
-    if (err) {
-      res.send(err);
-    }
-    res.render("editFactory", { factories: result[0] });
-  });
-});
-
-// ÉDITE LE NOM DU CONSTRUCTEUR SELON SON ID
-
-app.put("/editFactory/:id", (req, res) => {
-  const id = req.params.id;
-  const name = req.body.name;
-
-  let query =
-    "UPDATE factories SET name = '" + name + "' WHERE id = '" + id + "'";
-
-  db.query(query, (err, result) => {
-    if (err) {
-      return res.send(err);
-    }
-    res.redirect("/");
-  });
-});
-
-// AFFICHE LA PAGE POUR ÉDITER LE NOM DU CARBURANT SELON SON ID
-
-app.get("/editEnergy/:id", (req, res) => {
-  const id = req.params.id;
-
-  let query = "SELECT e.id, e.name FROM energies AS e WHERE e.id =" + id;
-
-  db.query(query, (err, result) => {
-    console.log(result);
-    if (err) {
-      res.send(err);
-    }
-    res.render("editEnergy", { energies: result[0] });
-  });
-});
-
-// ÉDITE LE NOM DU CARBURANT SELON SON ID
-
-app.put("/editEnergy/:id", async (req, res) => {
-  const id = req.params.id;
-  const name = req.body.name;
-
-  let query =
-    "UPDATE energies SET name = '" + name + "' WHERE id = '" + id + "'";
-
-  db.query(query, (err, result) => {
-    if (err) {
-      return res.send(err);
-    }
-    res.redirect("/");
-  });
-});
-
-app.delete("/:id", async (req, res) => {
-  const id = req.params.id;
-
-  const deleteFactory = await query("DELETE FROM factories WHERE id =" + id);
-
-  const deleteEnergy = await query("DELETE FROM energies WHERE id =" + id);
-
-  res.redirect("/");
-});
+// Affiche la page d'accueil
+app.get("/", getHomePage);
+// Permet d'ajouter un constructeur ou un carburant
+app.post("/add", addElement);
+// Permet d'ajouter une image
+app.post("/addFile", addFile);
+// Affiche la page d'édition du constructeur
+app.get("/editFactory/:id", getEditFactory);
+// Met à jour le constructeur
+app.put("/editFactory/:id", putEditFactory);
+// Affiche la page d'édition du carburant
+app.get("/editEnergy/:id", getEditEnergy);
+// Met à jour le carburant
+app.put("/editEnergy/:id", putEditEnergy);
+// Permet de supprimer un constructeur ou un carburant
+app.delete("/:id", deleteElement);
 
 // SERVER
 app.listen(PORT, function () {
