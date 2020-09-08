@@ -121,6 +121,51 @@ app.post("/addFile", async (req, res) => {
   res.redirect("/");
 });
 
+// AFFICHE LA PAGE POUR ÉDITER LE NOM DU CONSTRUCTEUR SELON SON ID
+
+app.get("/editFactory/:id", (req, res) => {
+  const id = req.params.id;
+
+  let query = "SELECT f.id, f.name FROM factories AS f WHERE f.id =" + id;
+
+  db.query(query, (err, result) => {
+    console.log(result);
+    if (err) {
+      res.send(err);
+    }
+    res.render("editFactory", { factories: result[0] });
+  });
+});
+
+// ÉDITE LE NOM DU CONSTRUCTEUR SELON SON ID
+
+app.put("/editFactory/:id", (req, res) => {
+  const id = req.params.id;
+  const name = req.body.name;
+
+  let query =
+    "UPDATE factories SET name = '" + name + "' WHERE id = '" + id + "'";
+
+  db.query(query, (err, result) => {
+    if (err) {
+      return res.send(err);
+    }
+    res.redirect("/");
+  });
+});
+
+// AFFICHE LA PAGE POUR ÉDITER LE NOM DU CARBURANT SELON SON ID
+
+app.get("/editEnergy/:id", (req, res) => {
+  res.render("editEnergy");
+});
+
+// ÉDITE LE NOM DU CARBURANT SELON SON ID
+
+app.put("/editEnergy/:id", async (req, res) => {
+  const id = req.params.id;
+});
+
 app.delete("/:id", async (req, res) => {
   const id = req.params.id;
 

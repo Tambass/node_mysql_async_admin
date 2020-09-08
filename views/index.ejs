@@ -19,16 +19,14 @@
                         <th scope="row"><%=factory.id%></th>
                         <td><%=factory.name%></td>
                         <td>
-                            <form action="">
-                                <button type="button" class="btn btn-primary">
-                                    <a href="/">
-                                        <i class="fas fa-pen" style="color: #fff;"></i>
-                                    </a>
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-primary">
+                                <a href="/editFactory/<%=factory.id%>">
+                                    <i class="fas fa-pen" style="color: #fff;"></i>
+                                </a>
+                            </button>
                         </td>
                         <td>
-                            <form method="POST" action="/<%=factory.id%>/?_method=DELETE">
+                            <form method="POST" action="/<%=factory.id%>?_method=DELETE">
                                 <button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
                             </form>
                         </td>
@@ -54,13 +52,11 @@
                         <th scope="row"><%=energy.id%></th>
                         <td><%=energy.name%></td>
                         <td>
-                            <form action="">
-                                <button type="button" class="btn btn-primary">
-                                    <a href="/">
-                                        <i class="fas fa-pen" style="color: #fff;"></i>
-                                    </a>
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-primary">
+                                <a href="/editEnergy/<%=energy.id%>">
+                                    <i class="fas fa-pen" style="color: #fff;"></i>
+                                </a>
+                            </button>
                         </td>
                         <td>
                             <form method="POST" action="/<%=energy.id%>/?_method=DELETE">
